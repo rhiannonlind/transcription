@@ -92,7 +92,7 @@ useEffect(() => {
               <p className='text-sm'>{duration}s</p>
              )}
               
-            <i className={'fa-solid fa-microphone duration-200 ' + (recordingStatus === 'recording' ? 'text-rose-300' : '')}></i>
+            <i className={'fa-solid fa-microphone duration-200 ' + (recordingStatus === 'recording' ? 'text-[#A94400]' : '')}></i>
             </div>
 
            
@@ -106,7 +106,7 @@ useEffect(() => {
             className='hidden' type='file' accept='.mp3, .wave' />
             </label> an mp3 file
         </p>
-        <p className="italic text-slate-400">Free now, free forever</p>
+        <p className="italic text-black">Free now, free forever</p>
     </main>
   )
 }

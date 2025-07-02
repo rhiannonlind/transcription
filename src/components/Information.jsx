@@ -79,7 +79,7 @@ export default function Information(props) {
         <main className='flex-1  p-4 flex flex-col gap-3 text-center sm:gap-4 justify-center pb-20 max-w-prose w-full mx-auto'>
             <h1 className='font-semibold text-4xl sm:text-5xl md:text-6xl whitespace-nowrap'>Your <span className='text-[#A94400] bold'>Transcription</span></h1>
 
-            <div className='grid grid-cols-2 sm:mx-auto mt-[30px] bg-white rounded overflow-hidden items-center blueShadow border-[1px] border-solid border-[#A94400]'>
+            <div className='grid grid-cols-2 sm:mx-auto mt-[30px] bg-white rounded overflow-hidden items-center orangeShadow border-[1px] border-solid border-[#A94400]'>
                 <button
                     onClick={() => setTab('transcription')}
                     className={
