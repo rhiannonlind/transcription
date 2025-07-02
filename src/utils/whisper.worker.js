@@ -1,14 +1,33 @@
+// Configure ONNX Runtime Web environment before importing transformers
+import * as ort from 'onnxruntime-web'
+
+// Set WASM paths for ONNX Runtime Web
+ort.env.wasm.wasmPaths = '/'
+
+// Configure environment for @xenova/transformers
+ort.env.wasm.numThreads = 1
+ort.env.wasm.simd = false
+
 import { pipeline } from '@xenova/transformers'
 import { MessageTypes } from './presets'
 
+self.addEventListener('error', (e) => {
+  console.error('Worker error:', e);
+});
+self.addEventListener('unhandledrejection', (e) => {
+  console.error('Worker unhandled rejection:', e);
+});
+
 class MyTranscriptionPipeline {
     static task = 'automatic-speech-recognition'
-    static model = 'openai/whisper-tiny.en'
+    static model = 'Xenova/whisper-tiny.en'
     static instance = null
 
     static async getInstance(progress_callback = null) {
         if (this.instance === null) {
-            this.instance = await pipeline(this.task, null, { progress_callback })
+            console.log('About to call pipeline with:', this.task, this.model);
+            this.instance = await pipeline(this.task, this.model, { progress_callback });
+            console.log('Pipeline instance:', this.instance);
         }
 
         return this.instance
@@ -28,9 +47,15 @@ async function transcribe(audio) {
     let pipeline
 
     try {
-        pipeline = await MyTranscriptionPipeline.getInstance(load_model_callback)
+        pipeline = await MyTranscriptionPipeline.getInstance(load_model_callback);
+        console.log('Pipeline after getInstance:', pipeline);
     } catch (err) {
         console.log(err.message)
+    }
+
+    if (!pipeline) {
+      console.error('Pipeline was not created!');
+      return;
     }
 
     sendLoadingMessage('success')

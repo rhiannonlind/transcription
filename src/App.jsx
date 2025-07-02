@@ -4,7 +4,7 @@ import Header from './components/Header'
 import FileDisplay from './components/FileDisplay'
 import Information from './components/Information'
 import Transcribing from './components/Transcribing'
-import { MessageTypes } from './utils/presets.js'
+import { MessageTypes } from './utils/presets'
 
 function App() {
   const [file, setFile] = useState(null)
@@ -25,14 +25,9 @@ function App() {
 
   useEffect(() => {
     if (!worker.current) {
-      try {
-        worker.current = new Worker(new URL('./utils/whisper.worker.js', import.meta.url), {
-          type: 'module'
-        })
-        console.log('Worker initialized successfully')
-      } catch (error) {
-        console.error('Failed to initialize worker:', error)
-      }
+      worker.current = new Worker(new URL('./utils/whisper.worker.js', import.meta.url), {
+        type: 'module'
+      })
     }
 
     const onMessageReceived = async (e) => {
@@ -57,9 +52,6 @@ function App() {
     }
 
     worker.current.addEventListener('message', onMessageReceived)
-    worker.current.addEventListener('error', (error) => {
-      console.error('Worker error:', error)
-    })
 
     return () => worker.current.removeEventListener('message', onMessageReceived)
   })
@@ -68,16 +60,23 @@ function App() {
     const sampling_rate = 16000
     const audioCTX = new AudioContext({ sampleRate: sampling_rate })
     const response = await file.arrayBuffer()
-    const decoded = await audioCTX.decodeAudioData(response)
-    const audio = decoded.getChannelData(0)
-    return audio
+    try {
+      const decoded = await audioCTX.decodeAudioData(response)
+      console.log('Decoded buffer:', decoded)
+      const audio = decoded.getChannelData(0)
+      console.log('Decoded audio:', audio)
+      return audio
+    } catch (e) {
+      console.error('Audio decoding error:', e)
+      return null
+    }
   }
 
   async function handleFormSubmission() {
     if (!file && !audioStream) { return }
 
     let audio = await readAudioFrom(file ? file : audioStream)
-    const model_name = `openai/whisper-tiny.en`
+    const model_name = `Xenova/whisper-tiny.en`
 
     console.log('Sending audio to worker:', audio, 'Model:', model_name);
 
